@@ -24,6 +24,12 @@ export class ProductService {
     const categoryExists = await categoryRepo.findById(data.category);
     if (!categoryExists) throw new Error("Category does not exist");
 
+    const productExists = await productRepo.findByIdField(data.name);
+    if (!productExists)
+      throw new Error(
+        `This exact product name ${data.name} exist. Edit name and try again!`
+      );
+
     // Parse JSON fields (Fix for Postman & frontend)
     data.colors = tryJsonParse(data.colors);
     data.sizes = tryJsonParse(data.sizes);

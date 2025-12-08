@@ -9,6 +9,10 @@ export class ProductRepository {
     return Product.find().populate("category");
   }
 
+  findByIdField(name: string) {
+    return Product.findOne({ name });
+  }
+
   findSingle(id: string) {
     return Product.findById(id).populate("category");
   }

@@ -14,6 +14,7 @@ const productSchema = new Schema<ProductDoc>(
       sold: Number,
       damaged: Number,
       returned: Number,
+      amountSold: Number,
     },
 
     colors: [String],
