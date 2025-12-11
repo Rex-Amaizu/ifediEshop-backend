@@ -5,7 +5,7 @@ export const AuthController = {
   register: async (req: Request, res: Response, next: NextFunction) => {
     try {
       const user = await AuthService.register(req.body);
-      res.status(201).json({ message: "Registered", user });
+      res.status(201).json({ message: "Registered Successfully", user });
     } catch (err) {
       next(err);
     }
@@ -15,7 +15,10 @@ export const AuthController = {
     try {
       const { email, password } = req.body;
       const result = await AuthService.login(email, password);
-      res.json(result);
+      res.json({
+        message: "Login successful",
+        ...result, // contains accessToken, refreshToken, user
+      });
     } catch (err) {
       next(err);
     }
@@ -25,6 +28,18 @@ export const AuthController = {
     try {
       await AuthService.logout(req.user.id);
       res.json({ message: "Logged out" });
+    } catch (err) {
+      next(err);
+    }
+  },
+
+  refresh: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { refreshToken } = req.body;
+
+      const newToken = await AuthService.refresh(refreshToken);
+
+      res.json({ accessToken: newToken });
     } catch (err) {
       next(err);
     }
