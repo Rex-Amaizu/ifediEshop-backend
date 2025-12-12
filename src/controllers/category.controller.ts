@@ -6,15 +6,23 @@ const categoryService = new CategoryService();
 export class CategoryController {
   static async add(req: Request, res: Response) {
     try {
-      const cat = await categoryService.addCategory(req.body.name);
-      res.status(201).json(cat);
+      console.log("body", req.body);
+      const cat = await categoryService.addCategory(req.body);
+      res
+        .status(201)
+        .json({ message: "Category created successfully!", data: cat });
     } catch (err: any) {
       res.status(400).json({ message: err.message });
     }
   }
 
   static async getAll(req: Request, res: Response) {
-    res.json(await categoryService.getAll());
+    try {
+      const allCat = await categoryService.getAll();
+      res.json(allCat);
+    } catch (err: any) {
+      res.status(400).json({ message: err.message });
+    }
   }
 
   static async getSingle(req: Request, res: Response) {
@@ -47,6 +55,7 @@ export class CategoryController {
         data: deletedCat,
       });
     } catch (err: any) {
+      console.log("error", err);
       res.status(400).json({ message: err.message });
     }
   }

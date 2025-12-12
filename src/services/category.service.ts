@@ -3,10 +3,10 @@ import { CategoryRepository } from "../repositories/category.repository";
 const categoryRepo = new CategoryRepository();
 
 export class CategoryService {
-  async addCategory(name: string) {
-    const category = await categoryRepo.findByIdField(name); // see repo method below
+  async addCategory(data: any) {
+    const category = await categoryRepo.findByIdField(data.name); // see repo method below
     if (category) throw new Error("Category Already exists!");
-    return categoryRepo.create({ name });
+    return categoryRepo.create(data);
   }
 
   getAll() {

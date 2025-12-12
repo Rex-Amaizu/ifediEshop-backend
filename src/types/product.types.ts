@@ -11,6 +11,7 @@ export interface ProductDoc extends Document {
     sold: number;
     damaged: number;
     returned: number;
+    amountSold: Number;
   };
   colors: string[];
   sizes: string[];

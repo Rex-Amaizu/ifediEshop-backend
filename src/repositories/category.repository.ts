@@ -12,7 +12,7 @@ export class CategoryRepository {
   }
 
   findByIdField(name: string) {
-    return Category.findOne({ name });
+    return Category.findOne({ name: { $regex: new RegExp(`^${name}$`, "i") } });
   }
   update(id: string, data: any) {
     return Category.findByIdAndUpdate(id, data, { new: true });

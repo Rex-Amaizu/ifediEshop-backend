@@ -10,7 +10,9 @@ export class ProductController {
         req.body,
         req.files as Express.Multer.File[]
       );
-      res.status(201).json(p);
+      res
+        .status(201)
+        .json({ message: "Product created successfully!", data: p });
     } catch (err: any) {
       res.status(400).json({ message: err.message });
     }

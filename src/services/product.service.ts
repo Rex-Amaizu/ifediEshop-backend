@@ -25,7 +25,7 @@ export class ProductService {
     if (!categoryExists) throw new Error("Category does not exist");
 
     const productExists = await productRepo.findByIdField(data.name);
-    if (!productExists)
+    if (productExists)
       throw new Error(
         `This exact product name ${data.name} exist. Edit name and try again!`
       );
