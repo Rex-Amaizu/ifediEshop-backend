@@ -33,8 +33,15 @@ export const AuthService = {
     return { accessToken, refreshToken, user };
   },
 
-  logout: async (userId: string) => {
-    await TokenRepository.deleteByUser(userId);
+  logout: async (refreshToken: string) => {
+    const tokenDoc = await TokenRepository.findToken(refreshToken);
+
+    if (!tokenDoc) {
+      // Idempotent logout: already logged out
+      return;
+    }
+
+    await TokenRepository.deleteToken(refreshToken);
   },
 
   refresh: async (refreshToken: string) => {

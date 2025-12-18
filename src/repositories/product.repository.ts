@@ -17,6 +17,10 @@ export class ProductRepository {
     return Product.findById(id).populate("category");
   }
 
+  findProductById(id: string) {
+    return Product.findById(id);
+  }
+
   update(id: string, data: any) {
     return Product.findByIdAndUpdate(id, data, { new: true });
   }

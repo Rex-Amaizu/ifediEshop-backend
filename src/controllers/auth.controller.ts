@@ -26,7 +26,12 @@ export const AuthController = {
 
   logout: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      await AuthService.logout(req.user.id);
+      const { refreshToken } = req.body;
+      if (!refreshToken) {
+        throw new Error("Refresh token is required");
+      }
+
+      await AuthService.logout(refreshToken);
       res.json({ message: "Logged out" });
     } catch (err) {
       next(err);

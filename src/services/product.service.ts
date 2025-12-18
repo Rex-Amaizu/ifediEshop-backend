@@ -43,8 +43,18 @@ export class ProductService {
       imageUrls.push(url);
     }
 
+    // 5️⃣ Build category array (🔥 IMPORTANT PART)
+    const categoryPayload = [
+      {
+        id: categoryExists._id,
+        name: categoryExists.name,
+      },
+    ];
+
+    // 6️⃣ Replace category ID with category object array
     const payload = {
       ...data,
+      category: categoryPayload,
       images: imageUrls,
     };
 
@@ -69,25 +79,61 @@ export class ProductService {
   }
 
   async update(id: string, data: any, files: Express.Multer.File[]) {
-    data.colors = tryJsonParse(data.colors);
-    data.sizes = tryJsonParse(data.sizes);
-    data.reviews = tryJsonParse(data.reviews);
-    data.stock = tryJsonParse(data.stock);
+    const productExists = await productRepo.findProductById(id);
+    if (!productExists) throw new Error("Product not found");
+
+    const payload: any = { ...data };
     let imageUrls: string[] = [];
 
-    // If new images are uploaded
-    if (files?.length) {
-      for (const file of files) {
-        const url = await uploadBufferToCloudinary(file.buffer, "products");
-        imageUrls.push(url);
-      }
-
-      data.images = imageUrls;
+    if (data.category) {
+      const categoryExists = await categoryRepo.findById(data.category);
+      if (!categoryExists) throw new Error("Category does not exist");
+      const categoryPayload = [
+        {
+          id: categoryExists._id,
+          name: categoryExists.name,
+        },
+      ];
+      payload.category = categoryPayload;
     }
 
-    const confirmProduct = productRepo.update(id, data);
-    if (!confirmProduct) throw new Error("Product does not exist!");
-    return confirmProduct;
+    if (data.colors) {
+      payload.colors = tryJsonParse(data.colors);
+    }
+    if (data.sizes) {
+      payload.sizes = tryJsonParse(data.sizes);
+    }
+    if (data.name) {
+      payload.name = tryJsonParse(data.name);
+    }
+    if (data.subCategory) {
+      payload.subCategory = tryJsonParse(data.subCategory);
+    }
+    if (data.price) {
+      payload.price = tryJsonParse(data.price);
+    }
+    if (data.gender) {
+      payload.gender = tryJsonParse(data.gender);
+    }
+
+    if (data.stock) {
+      const incoming = JSON.parse(data.stock);
+      payload.stock = {
+        total: Math.max(0, incoming.total ?? productExists.stock.total),
+        sold: Math.max(0, incoming.sold ?? productExists.stock.sold),
+        damaged: Math.max(0, incoming.damaged ?? productExists.stock.damaged),
+        returned: Math.max(
+          0,
+          incoming.returned ?? productExists.stock.returned
+        ),
+        amountSold: Math.max(
+          0,
+          incoming.amountSold ?? productExists.stock.amountSold
+        ),
+      };
+    }
+
+    return productRepo.update(id, payload);
   }
 
   delete(id: string) {

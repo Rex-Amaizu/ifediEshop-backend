@@ -4,7 +4,13 @@ import { ProductDoc } from "../../types/product.types";
 const productSchema = new Schema<ProductDoc>(
   {
     name: { type: String, required: true },
-    category: { type: Schema.Types.ObjectId, ref: "Category", required: true },
+    category: [
+      {
+        id: { type: Schema.Types.ObjectId, ref: "Category", required: true },
+        name: { type: String, required: true },
+      },
+    ],
+
     subCategory: String,
     price: Number,
     gender: String,

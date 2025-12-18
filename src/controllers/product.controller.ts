@@ -41,7 +41,7 @@ export class ProductController {
         req.body,
         req.files as Express.Multer.File[]
       );
-      res.json(p);
+      res.json({ message: "Product updated successfuly!", data: p });
     } catch (err: any) {
       res.status(400).json({ message: err.message });
     }
@@ -49,7 +49,11 @@ export class ProductController {
 
   static async delete(req: Request, res: Response) {
     try {
-      res.json(await productService.delete(req.params.id));
+      const deleteProduct = await productService.delete(req.params.id);
+      res.json({
+        message: "Product deleted successfully",
+        data: deleteProduct,
+      });
     } catch (err: any) {
       res.status(400).json({ message: err.message });
     }
