@@ -136,6 +136,36 @@ export class ProductService {
     return productRepo.update(id, payload);
   }
 
+  async deductStock(id: string, quantity: number) {
+    const product = await productRepo.findProductById(id);
+    if (!product) throw new Error("Product not found");
+
+    if (!product.stock || typeof product.stock.total !== "number") {
+      throw new Error("Stock not initialized for this product");
+    }
+
+    const total = Number(product.stock.total);
+
+    if (quantity > total) {
+      throw new Error("Not enough stock available");
+    }
+
+    const rawPrice: any = product.price;
+
+    const price = Number(
+      rawPrice?.$numberDecimal ?? rawPrice?.toString?.() ?? rawPrice ?? 0
+    );
+
+    const newStock = {
+      ...product.stock,
+      total: total - quantity,
+      sold: Number(product.stock.sold ?? 0) + quantity,
+      amountSold: Number(product.stock.amountSold ?? 0) + quantity * price,
+    };
+
+    return await productRepo.update(id, { stock: newStock });
+  }
+
   delete(id: string) {
     const deleteProd = productRepo.delete(id);
     if (!deleteProd) throw new Error("Product not deleted!");

@@ -22,6 +22,7 @@ router.put(
   upload.array("images", 10),
   ProductController.update
 );
+router.put("/:id/deduct-stock", ProductController.deductStock);
 router.delete(
   "/:id",
   authMiddleware,

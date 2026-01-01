@@ -47,6 +47,22 @@ export class ProductController {
     }
   }
 
+  static async deductStock(req: Request, res: Response) {
+    try {
+      const updated = await productService.deductStock(
+        req.params.id,
+        req.body.quantity
+      );
+
+      res.json({
+        message: "Stock updated successfully",
+        data: updated,
+      });
+    } catch (err: any) {
+      res.status(400).json({ message: err.message });
+    }
+  }
+
   static async delete(req: Request, res: Response) {
     try {
       const deleteProduct = await productService.delete(req.params.id);
